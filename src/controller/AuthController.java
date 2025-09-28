@@ -57,9 +57,9 @@ public class AuthController {
         try {
             Manager manager = new Manager(name, email, password);
             authService.registerManager(manager);
-            System.out.println("✅ Manager registered successfully!");
+            System.out.println("Manager registered successfully!");
         } catch (IllegalArgumentException e) {
-            System.out.println( e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
@@ -69,28 +69,32 @@ public class AuthController {
         System.out.print("Enter password: ");
         String password = scanner.nextLine();
 
-        Optional<Person> loggedIn = authService.login(email, password);
+        try {
+            Optional<Person> loggedIn = authService.login(email, password);
 
-        if (loggedIn.isEmpty()) {
-            System.out.println("Invalid credentials.");
-            return;
-        }
+            if (loggedIn.isEmpty()) {
+                System.out.println("Invalid credentials.");
+                return;
+            }
 
-        Person person = loggedIn.get();
-        SessionManager.setCurrentUser(person);
-        
-        if (person instanceof Manager) {
-            System.out.println("Manager logged in: " + person.getName());
-            new ManagerMenu((Manager) person).show();
-        } else if (person instanceof Client) {
-            System.out.println("Client logged in: " + person.getName());
-            new ClientMenu((Client) person).show();
+            Person person = loggedIn.get();
+            SessionManager.setCurrentUser(person);
+            
+            if (person instanceof Manager) {
+                System.out.println("Manager logged in: " + person.getName());
+                new ManagerMenu((Manager) person).show();
+            } else if (person instanceof Client) {
+                System.out.println("Client logged in: " + person.getName());
+                new ClientMenu((Client) person).show();
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
         }
     }
     
     private void handleLogout() {
         SessionManager.logout();
-        System.out.println("✅ Successfully logged out.");
+        System.out.println("Successfully logged out.");
     }
 
 }

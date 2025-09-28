@@ -1,6 +1,7 @@
 package service;
 
 import repository.PersonRepository;
+import utils.Validation;
 
 import java.util.Optional;
 
@@ -17,16 +18,36 @@ public class AuthService {
     }
 
     public void registerClient(Client client){
+        // Validate input
+        if (!Validation.isValidName(client.getName())) {
+            throw new IllegalArgumentException("Invalid name. Name must be at least 2 characters long.");
+        }
+        if (!Validation.isValidEmail(client.getEmail())) {
+            throw new IllegalArgumentException("Invalid email format.");
+        }
+        if (!Validation.isValidPassword(client.getPassword())) {
+            throw new IllegalArgumentException("Invalid password. Password must be at least 6 characters long.");
+        }
 
         Optional<Person> existing = personRepo.findByEmail(client.getEmail());
         if(existing.isPresent()){
             throw new IllegalArgumentException("Email already exists !");
         }
         personRepo.save(client);
-
     }
 
     public void registerManager(Manager manager) {
+        // Validate input
+        if (!Validation.isValidName(manager.getName())) {
+            throw new IllegalArgumentException("Invalid name. Name must be at least 2 characters long.");
+        }
+        if (!Validation.isValidEmail(manager.getEmail())) {
+            throw new IllegalArgumentException("Invalid email format.");
+        }
+        if (!Validation.isValidPassword(manager.getPassword())) {
+            throw new IllegalArgumentException("Invalid password. Password must be at least 6 characters long.");
+        }
+
         Optional<Person> existing = personRepo.findByEmail(manager.getEmail());
         if (existing.isPresent()) {
             throw new IllegalArgumentException("Email already exists: " + manager.getEmail());
@@ -35,6 +56,14 @@ public class AuthService {
     }
 
     public Optional<Person> login(String email, String password){
+        // Validate input
+        if (!Validation.isValidEmail(email)) {
+            throw new IllegalArgumentException("Invalid email format.");
+        }
+        if (!Validation.isValidPassword(password)) {
+            throw new IllegalArgumentException("Invalid password. Password must be at least 6 characters long.");
+        }
+        
         return personRepo.findByEmail(email)
                             .filter(p -> p.getPassword().equals(password));
     }
