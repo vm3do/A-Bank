@@ -6,7 +6,7 @@ public class Client extends Person {
 
     private List<Account> accounts = new ArrayList<>();
 
-    public Client(String name, String email, String phone, String password) {
+    public Client(String name, String email, String password) {
         super(name, email, password);
     }
 
