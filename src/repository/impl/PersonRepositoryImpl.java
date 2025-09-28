@@ -1,13 +1,10 @@
 package repository.impl;
 
 import java.util.ArrayList;
-import java.util.stream.Collector;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-
-import model.Client;
 import model.Person;
 import repository.PersonRepository;
 
