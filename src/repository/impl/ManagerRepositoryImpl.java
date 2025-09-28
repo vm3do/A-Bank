@@ -4,4 +4,6 @@ import repository.ManagerRepository;
 
 public class ManagerRepositoryImpl implements ManagerRepository {
     
+
+    
 }

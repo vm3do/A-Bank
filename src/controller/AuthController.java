@@ -44,6 +44,23 @@ public class AuthController {
             }
         }
     }
+    
+    private void handleRegisterManager() {
+        System.out.print("Enter name: ");
+        String name = scanner.nextLine();
+        System.out.print("Enter email: ");
+        String email = scanner.nextLine();
+        System.out.print("Enter password: ");
+        String password = scanner.nextLine();
+
+        try {
+            Manager manager = new Manager(name, email, password);
+            authService.registerManager(manager);
+            System.out.println("✅ Manager registered successfully!");
+        } catch (IllegalArgumentException e) {
+            System.out.println("❌ " + e.getMessage());
+        }
+    }
 
     private void handleLogin() {
         System.out.print("Enter email: ");
@@ -68,20 +85,4 @@ public class AuthController {
         }
     }
 
-    private void handleRegisterManager() {
-        System.out.print("Enter name: ");
-        String name = scanner.nextLine();
-        System.out.print("Enter email: ");
-        String email = scanner.nextLine();
-        System.out.print("Enter password: ");
-        String password = scanner.nextLine();
-
-        try {
-            Manager manager = new Manager(name, email, password);
-            authService.registerManager(manager);
-            System.out.println("✅ Manager registered successfully!");
-        } catch (IllegalArgumentException e) {
-            System.out.println("❌ " + e.getMessage());
-        }
-    }
 }

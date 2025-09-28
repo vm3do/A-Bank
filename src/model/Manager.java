@@ -6,7 +6,7 @@ public class Manager extends Person {
 
     private List<Client> clientsList = new ArrayList<>();
 
-    public Manager(String name, String email, String phone, String password) {
+    public Manager(String name, String email, String password) {
         super(name, email, password);
     }
 
