@@ -1,6 +1,5 @@
 package model;
 
-import java.util.List;
 import java.util.UUID;
 
 import model.enums.AccountType;
@@ -11,7 +10,6 @@ public class Account {
     private  double balance;
     private AccountType accountType;
     private Client owner;
-    private List<Transaction> transactions;
 
     public Account(double initialBalance, AccountType accountType, Client owner) {
         this.id = UUID.randomUUID();
@@ -36,20 +34,12 @@ public class Account {
         return owner;
     }
 
-    public List<Transaction> getTransactions() {
-        return transactions;
-    }
-
     public void setBalance(double balance) {
         this.balance = balance;
     }
 
     public void setAccountType(AccountType accountType) {
         this.accountType = accountType;
-    }
-
-    public void addTransaction(Transaction transaction) {
-        this.transactions.add(transaction);
     }
     
 }
