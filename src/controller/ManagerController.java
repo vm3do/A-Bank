@@ -3,10 +3,13 @@ package controller;
 import model.Manager;
 import model.Client;
 import model.Account;
+import model.Transaction;
 import service.AuthService;
 import service.ClientService;
+import service.AccountService;
 import repository.PersonRepository;
 import repository.impl.PersonRepositoryImpl;
+import java.util.List;
 import java.util.Scanner;
 
 public class ManagerController {
@@ -14,6 +17,7 @@ public class ManagerController {
     private final Manager manager;
     private final AuthService authService;
     private final ClientService clientService;
+    private final AccountService accountService;
     private final Scanner scanner = new Scanner(System.in);
     
     public ManagerController(Manager manager) {
@@ -21,6 +25,7 @@ public class ManagerController {
         PersonRepository personRepository = new PersonRepositoryImpl();
         this.authService = new AuthService(personRepository);
         this.clientService = new ClientService();
+        this.accountService = new AccountService();
     }
     
     public void viewAllClients() {
@@ -113,7 +118,34 @@ public class ManagerController {
     
     public void viewAllTransactions() {
         System.out.println("\n=== All Transactions ===");
-        System.out.println("Transaction functionality will be implemented in the next step.");
-        System.out.println("This will show all transactions across all accounts.");
+        if (manager.getClientsList().isEmpty()) {
+            System.out.println("No clients found.");
+            return;
+        }
+        
+        boolean hasTransactions = false;
+        for (Client client : manager.getClientsList()) {
+            if (!client.getAccounts().isEmpty()) {
+                for (Account account : client.getAccounts()) {
+                    List<Transaction> transactions = accountService.getAccountTransactions(account);
+                    if (!transactions.isEmpty()) {
+                        hasTransactions = true;
+                        System.out.println("\nClient: " + client.getName());
+                        System.out.println("Account: " + account.getAccountType() + " (ID: " + account.getId() + ")");
+                        System.out.println("Transactions:");
+                        for (Transaction transaction : transactions) {
+                            System.out.println("- " + transaction.getType() + ": $" + transaction.getAmount());
+                            System.out.println("  Date: " + transaction.getDate());
+                            System.out.println("  Description: " + transaction.getDescription());
+                            System.out.println("  ---");
+                        }
+                    }
+                }
+            }
+        }
+        
+        if (!hasTransactions) {
+            System.out.println("No transactions found.");
+        }
     }
 }

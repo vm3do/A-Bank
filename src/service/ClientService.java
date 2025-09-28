@@ -35,9 +35,6 @@ public class ClientService {
         return clientRepository.findAll();
     }
     
-    public void updateClient(Client client) {
-        clientRepository.update(client);
-    }
     
     public boolean deleteClient(Client client) {
         // Check if client has accounts with non-zero balance
@@ -52,7 +49,6 @@ public class ClientService {
     
     public void addAccountToClient(Client client, Account account) {
         client.addAccount(account);
-        clientRepository.update(client);
     }
     
     public void removeAccountFromClient(Client client, Account account) {
@@ -61,7 +57,6 @@ public class ClientService {
         }
         
         client.getAccounts().remove(account);
-        clientRepository.update(client);
     }
     
     public List<Account> getClientAccounts(Client client) {

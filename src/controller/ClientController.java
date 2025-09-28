@@ -112,7 +112,146 @@ public class ClientController {
         System.out.print("Choose transaction type (1-3): ");
         
         String choice = scanner.nextLine();
-        // todo: transaction functionality
-        System.out.println("Selected type: " + choice);
+        
+        switch (choice) {
+            case "1":
+                handleDeposit();
+                break;
+            case "2":
+                handleWithdrawal();
+                break;
+            case "3":
+                handleTransfer();
+                break;
+            default:
+                System.out.println("Invalid choice.");
+        }
+    }
+    
+    private void handleDeposit() {
+        if (client.getAccounts().isEmpty()) {
+            System.out.println("No accounts found. Please create an account first.");
+            return;
+        }
+        
+        System.out.println("\n=== Deposit Money ===");
+        System.out.println("Your Accounts:");
+        for (int i = 0; i < client.getAccounts().size(); i++) {
+            Account account = client.getAccounts().get(i);
+            System.out.println((i + 1) + ". " + account.getAccountType() + " - Balance: $" + account.getBalance());
+        }
+        
+        System.out.print("Select account (1-" + client.getAccounts().size() + "): ");
+        try {
+            int accountIndex = Integer.parseInt(scanner.nextLine()) - 1;
+            if (accountIndex < 0 || accountIndex >= client.getAccounts().size()) {
+                System.out.println("Invalid account selection.");
+                return;
+            }
+            
+            Account account = client.getAccounts().get(accountIndex);
+            System.out.print("Enter amount to deposit: $");
+            double amount = Double.parseDouble(scanner.nextLine());
+            System.out.print("Enter description: ");
+            String description = scanner.nextLine();
+            
+            accountService.deposit(account, amount, description);
+            System.out.println("Deposit successful! New balance: $" + account.getBalance());
+            
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid amount format.");
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    
+    private void handleWithdrawal() {
+        if (client.getAccounts().isEmpty()) {
+            System.out.println("No accounts found. Please create an account first.");
+            return;
+        }
+        
+        System.out.println("\n=== Withdraw Money ===");
+        System.out.println("Your Accounts:");
+        for (int i = 0; i < client.getAccounts().size(); i++) {
+            Account account = client.getAccounts().get(i);
+            System.out.println((i + 1) + ". " + account.getAccountType() + " - Balance: $" + account.getBalance());
+        }
+        
+        System.out.print("Select account (1-" + client.getAccounts().size() + "): ");
+        try {
+            int accountIndex = Integer.parseInt(scanner.nextLine()) - 1;
+            if (accountIndex < 0 || accountIndex >= client.getAccounts().size()) {
+                System.out.println("Invalid account selection.");
+                return;
+            }
+            
+            Account account = client.getAccounts().get(accountIndex);
+            System.out.print("Enter amount to withdraw: $");
+            double amount = Double.parseDouble(scanner.nextLine());
+            System.out.print("Enter description: ");
+            String description = scanner.nextLine();
+            
+            accountService.withdraw(account, amount, description);
+            System.out.println("Withdrawal successful! New balance: $" + account.getBalance());
+            
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid amount format.");
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    
+    private void handleTransfer() {
+        if (client.getAccounts().size() < 2) {
+            System.out.println("You need at least 2 accounts to make transfers.");
+            return;
+        }
+        
+        System.out.println("\n=== Transfer Money ===");
+        System.out.println("Your Accounts:");
+        for (int i = 0; i < client.getAccounts().size(); i++) {
+            Account account = client.getAccounts().get(i);
+            System.out.println((i + 1) + ". " + account.getAccountType() + " - Balance: $" + account.getBalance());
+        }
+        
+        try {
+            System.out.print("Select FROM account (1-" + client.getAccounts().size() + "): ");
+            int fromIndex = Integer.parseInt(scanner.nextLine()) - 1;
+            if (fromIndex < 0 || fromIndex >= client.getAccounts().size()) {
+                System.out.println("Invalid account selection.");
+                return;
+            }
+            
+            System.out.print("Select TO account (1-" + client.getAccounts().size() + "): ");
+            int toIndex = Integer.parseInt(scanner.nextLine()) - 1;
+            if (toIndex < 0 || toIndex >= client.getAccounts().size()) {
+                System.out.println("Invalid account selection.");
+                return;
+            }
+            
+            if (fromIndex == toIndex) {
+                System.out.println("Cannot transfer to the same account.");
+                return;
+            }
+            
+            Account fromAccount = client.getAccounts().get(fromIndex);
+            Account toAccount = client.getAccounts().get(toIndex);
+            
+            System.out.print("Enter amount to transfer: $");
+            double amount = Double.parseDouble(scanner.nextLine());
+            System.out.print("Enter description: ");
+            String description = scanner.nextLine();
+            
+            accountService.transfer(fromAccount, toAccount, amount, description);
+            System.out.println("Transfer successful!");
+            System.out.println("From account balance: $" + fromAccount.getBalance());
+            System.out.println("To account balance: $" + toAccount.getBalance());
+            
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid amount format.");
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

@@ -52,9 +52,7 @@ public class AccountService {
         
         double newBalance = account.getBalance() + amount;
         account.setBalance(newBalance);
-        accountRepository.update(account);
         
-        // Create transaction record
         Transaction transaction = new Transaction(amount, TransactionType.DEPOSIT, description, null, account);
         transactionRepository.save(transaction);
     }
@@ -70,9 +68,7 @@ public class AccountService {
         
         double newBalance = account.getBalance() - amount;
         account.setBalance(newBalance);
-        accountRepository.update(account);
         
-        // Create transaction record
         Transaction transaction = new Transaction(amount, TransactionType.WITHDRAWAL, description, account, null);
         transactionRepository.save(transaction);
     }
@@ -90,14 +86,9 @@ public class AccountService {
             throw new IllegalArgumentException("Cannot transfer to the same account.");
         }
         
-        // Update balances
         fromAccount.setBalance(fromAccount.getBalance() - amount);
         toAccount.setBalance(toAccount.getBalance() + amount);
         
-        accountRepository.update(fromAccount);
-        accountRepository.update(toAccount);
-        
-        // Create transaction record
         Transaction transaction = new Transaction(amount, TransactionType.TRANSFER, description, fromAccount, toAccount);
         transactionRepository.save(transaction);
     }
