@@ -1,9 +1,9 @@
-package repository.impl;
+// package repository.impl;
 
-import repository.ManagerRepository;
+// import repository.ManagerRepository;
 
-public class ManagerRepositoryImpl implements ManagerRepository {
+// public class ManagerRepositoryImpl implements ManagerRepository {
     
 
     
-}
+// }

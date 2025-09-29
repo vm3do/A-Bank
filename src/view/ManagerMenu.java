@@ -2,6 +2,7 @@ package view;
 
 import model.Manager;
 import controller.ManagerController;
+import repository.PersonRepository;
 import java.util.Scanner;
 
 public class ManagerMenu {
@@ -10,9 +11,9 @@ public class ManagerMenu {
     private final ManagerController managerController;
     private final Scanner scanner = new Scanner(System.in);
     
-    public ManagerMenu(Manager manager) {
+    public ManagerMenu(Manager manager, PersonRepository personRepository) {
         this.manager = manager;
-        this.managerController = new ManagerController(manager);
+        this.managerController = new ManagerController(manager, personRepository);
     }
     
     public void show() {

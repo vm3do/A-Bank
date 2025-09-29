@@ -7,6 +7,7 @@ import service.AuthService;
 import utils.SessionManager;
 import view.ClientMenu;
 import view.ManagerMenu;
+import repository.PersonRepository;
 
 import java.util.Optional;
 import java.util.Scanner;
@@ -14,10 +15,12 @@ import java.util.Scanner;
 public class AuthController {
 
     private final AuthService authService;
+    private final PersonRepository personRepository;
     private final Scanner scanner = new Scanner(System.in);
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, PersonRepository personRepository) {
         this.authService = authService;
+        this.personRepository = personRepository;
     }
 
     public void showMainMenu() {
@@ -82,7 +85,7 @@ public class AuthController {
             
             if (person instanceof Manager) {
                 System.out.println("Manager logged in: " + person.getName());
-                new ManagerMenu((Manager) person).show();
+                new ManagerMenu((Manager) person, personRepository).show();
             } else if (person instanceof Client) {
                 System.out.println("Client logged in: " + person.getName());
                 new ClientMenu((Client) person).show();

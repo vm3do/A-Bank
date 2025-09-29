@@ -37,7 +37,7 @@ public class ClientService {
     
     
     public boolean deleteClient(Client client) {
-        // Check if client has accounts with non-zero balance
+
         for (Account account : client.getAccounts()) {
             if (account.getBalance() != 0) {
                 throw new IllegalArgumentException("Cannot delete client with accounts containing funds.");
