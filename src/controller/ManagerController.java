@@ -5,7 +5,6 @@ import model.Client;
 import model.Account;
 import model.Transaction;
 import service.AuthService;
-import service.ClientService;
 import service.AccountService;
 import repository.PersonRepository;
 import java.util.List;
@@ -15,16 +14,12 @@ public class ManagerController {
     
     private final Manager manager;
     private final AuthService authService;
-    private final ClientService clientService;
-    private final PersonRepository personRepository;
     private final AccountService accountService;
     private final Scanner scanner = new Scanner(System.in);
     
     public ManagerController(Manager manager, PersonRepository personRepository) {
         this.manager = manager;
-        this.personRepository = personRepository;
         this.authService = new AuthService(personRepository);
-        this.clientService = new ClientService();
         this.accountService = new AccountService();
     }
     

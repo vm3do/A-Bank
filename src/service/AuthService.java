@@ -17,42 +17,35 @@ public class AuthService {
         this.personRepo = personRepo;
     }
 
-    public void registerClient(Client client){
-
-        if (!Validation.isValidName(client.getName())) {
-            throw new IllegalArgumentException("Invalid name. Name must be at least 2 characters long.");
-        }
-        if (!Validation.isValidEmail(client.getEmail())) {
-            throw new IllegalArgumentException("Invalid email format.");
-        }
-        if (!Validation.isValidPassword(client.getPassword())) {
-            throw new IllegalArgumentException("Invalid password. Password must be at least 6 characters long.");
-        }
-
-        Optional<Person> existing = personRepo.findByEmail(client.getEmail());
-        if(existing.isPresent()){
-            throw new IllegalArgumentException("Email already exists !");
-        }
+    public void registerClient(Client client) {
+        validatePerson(client);
+        checkEmailExists(client.getEmail());
         personRepo.save(client);
     }
 
     public void registerManager(Manager manager) {
-
-        if (!Validation.isValidName(manager.getName())) {
+        validatePerson(manager);
+        checkEmailExists(manager.getEmail());
+        personRepo.save(manager);
+    }
+    
+    private void validatePerson(Person person) {
+        if (!Validation.isValidName(person.getName())) {
             throw new IllegalArgumentException("Invalid name. Name must be at least 2 characters long.");
         }
-        if (!Validation.isValidEmail(manager.getEmail())) {
+        if (!Validation.isValidEmail(person.getEmail())) {
             throw new IllegalArgumentException("Invalid email format.");
         }
-        if (!Validation.isValidPassword(manager.getPassword())) {
+        if (!Validation.isValidPassword(person.getPassword())) {
             throw new IllegalArgumentException("Invalid password. Password must be at least 6 characters long.");
         }
-
-        Optional<Person> existing = personRepo.findByEmail(manager.getEmail());
+    }
+    
+    private void checkEmailExists(String email) {
+        Optional<Person> existing = personRepo.findByEmail(email);
         if (existing.isPresent()) {
-            throw new IllegalArgumentException("Email already exists: " + manager.getEmail());
+            throw new IllegalArgumentException("Email already exists: " + email);
         }
-        personRepo.save(manager);
     }
 
     public Optional<Person> login(String email, String password){

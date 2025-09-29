@@ -2,6 +2,7 @@ package view;
 
 import model.Client;
 import controller.ClientController;
+import utils.SessionManager;
 import java.util.Scanner;
 
 public class ClientMenu {
@@ -43,6 +44,7 @@ public class ClientMenu {
                     break;
                 case "0":
                     System.out.println("Logging out...");
+                    SessionManager.logout();
                     return;
                 default:
                     System.out.println("Invalid choice. Try again.");

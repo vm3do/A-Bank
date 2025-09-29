@@ -97,10 +97,6 @@ public class AccountService {
         return transactionRepository.findByAccount(account);
     }
     
-    public double getAccountBalance(Account account) {
-        return account.getBalance();
-    }
-    
     public boolean deleteAccount(Account account) {
         if (account.getBalance() != 0) {
             throw new IllegalArgumentException("Cannot delete account with non-zero balance.");

@@ -94,10 +94,5 @@ public class AuthController {
             System.out.println(e.getMessage());
         }
     }
-    
-    private void handleLogout() {
-        SessionManager.logout();
-        System.out.println("Successfully logged out.");
-    }
 
 }

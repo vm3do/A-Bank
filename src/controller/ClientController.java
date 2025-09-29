@@ -4,34 +4,23 @@ import model.Client;
 import model.Account;
 import model.enums.AccountType;
 import service.AccountService;
-import service.ClientService;
+import utils.DisplayUtils;
 import java.util.Scanner;
 
 public class ClientController {
     
     private final Client client;
     private final AccountService accountService;
-    private final ClientService clientService;
     private final Scanner scanner = new Scanner(System.in);
     
     public ClientController(Client client) {
         this.client = client;
         this.accountService = new AccountService();
-        this.clientService = new ClientService();
     }
     
     public void viewAccounts() {
         System.out.println("\n=== Your Accounts ===");
-        if (client.getAccounts().isEmpty()) {
-            System.out.println("No accounts found.");
-        } else {
-            for (Account account : client.getAccounts()) {
-                System.out.println("Account ID: " + account.getId());
-                System.out.println("Type: " + account.getAccountType());
-                System.out.println("Balance: $" + account.getBalance());
-                System.out.println("---");
-            }
-        }
+        DisplayUtils.displayAccounts(client.getAccounts());
     }
     
     public void createAccount() {
@@ -135,21 +124,10 @@ public class ClientController {
         }
         
         System.out.println("\n=== Deposit Money ===");
-        System.out.println("Your Accounts:");
-        for (int i = 0; i < client.getAccounts().size(); i++) {
-            Account account = client.getAccounts().get(i);
-            System.out.println((i + 1) + ". " + account.getAccountType() + " - Balance: $" + account.getBalance());
-        }
+        Account account = selectAccount();
+        if (account == null) return;
         
-        System.out.print("Select account (1-" + client.getAccounts().size() + "): ");
         try {
-            int accountIndex = Integer.parseInt(scanner.nextLine()) - 1;
-            if (accountIndex < 0 || accountIndex >= client.getAccounts().size()) {
-                System.out.println("Invalid account selection.");
-                return;
-            }
-            
-            Account account = client.getAccounts().get(accountIndex);
             System.out.print("Enter amount to deposit: $");
             double amount = Double.parseDouble(scanner.nextLine());
             System.out.print("Enter description: ");
@@ -172,21 +150,10 @@ public class ClientController {
         }
         
         System.out.println("\n=== Withdraw Money ===");
-        System.out.println("Your Accounts:");
-        for (int i = 0; i < client.getAccounts().size(); i++) {
-            Account account = client.getAccounts().get(i);
-            System.out.println((i + 1) + ". " + account.getAccountType() + " - Balance: $" + account.getBalance());
-        }
+        Account account = selectAccount();
+        if (account == null) return;
         
-        System.out.print("Select account (1-" + client.getAccounts().size() + "): ");
         try {
-            int accountIndex = Integer.parseInt(scanner.nextLine()) - 1;
-            if (accountIndex < 0 || accountIndex >= client.getAccounts().size()) {
-                System.out.println("Invalid account selection.");
-                return;
-            }
-            
-            Account account = client.getAccounts().get(accountIndex);
             System.out.print("Enter amount to withdraw: $");
             double amount = Double.parseDouble(scanner.nextLine());
             System.out.print("Enter description: ");
@@ -210,10 +177,7 @@ public class ClientController {
         
         System.out.println("\n=== Transfer Money ===");
         System.out.println("Your Accounts:");
-        for (int i = 0; i < client.getAccounts().size(); i++) {
-            Account account = client.getAccounts().get(i);
-            System.out.println((i + 1) + ". " + account.getAccountType() + " - Balance: $" + account.getBalance());
-        }
+        DisplayUtils.displayAccountsWithIndex(client.getAccounts());
         
         try {
             System.out.print("Select FROM account (1-" + client.getAccounts().size() + "): ");
@@ -252,6 +216,24 @@ public class ClientController {
             System.out.println("Invalid amount format.");
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
+        }
+    }
+    
+    private Account selectAccount() {
+        System.out.println("Your Accounts:");
+        DisplayUtils.displayAccountsWithIndex(client.getAccounts());
+        
+        System.out.print("Select account (1-" + client.getAccounts().size() + "): ");
+        try {
+            int accountIndex = Integer.parseInt(scanner.nextLine()) - 1;
+            if (accountIndex < 0 || accountIndex >= client.getAccounts().size()) {
+                System.out.println("Invalid account selection.");
+                return null;
+            }
+            return client.getAccounts().get(accountIndex);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid account selection.");
+            return null;
         }
     }
 }

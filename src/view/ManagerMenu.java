@@ -3,6 +3,7 @@ package view;
 import model.Manager;
 import controller.ManagerController;
 import repository.PersonRepository;
+import utils.SessionManager;
 import java.util.Scanner;
 
 public class ManagerMenu {
@@ -48,6 +49,7 @@ public class ManagerMenu {
                     break;
                 case "0":
                     System.out.println("Logging out...");
+                    SessionManager.logout();
                     return;
                 default:
                     System.out.println("Invalid choice. Try again.");
