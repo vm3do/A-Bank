@@ -88,7 +88,7 @@ public class AuthController {
                 new ManagerMenu((Manager) person, personRepository).show();
             } else if (person instanceof Client) {
                 System.out.println("Client logged in: " + person.getName());
-                new ClientMenu((Client) person).show();
+                new ClientMenu((Client) person, personRepository).show();
             }
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());

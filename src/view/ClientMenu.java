@@ -3,6 +3,7 @@ package view;
 import model.Client;
 import controller.ClientController;
 import utils.SessionManager;
+import repository.PersonRepository;
 import java.util.Scanner;
 
 public class ClientMenu {
@@ -11,9 +12,9 @@ public class ClientMenu {
     private final ClientController clientController;
     private final Scanner scanner = new Scanner(System.in);
     
-    public ClientMenu(Client client) {
+    public ClientMenu(Client client, PersonRepository personRepository) {
         this.client = client;
-        this.clientController = new ClientController(client);
+        this.clientController = new ClientController(client, personRepository);
     }
     
     public void show() {

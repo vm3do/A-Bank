@@ -5,17 +5,21 @@ import model.Account;
 import model.enums.AccountType;
 import service.AccountService;
 import utils.DisplayUtils;
+import repository.PersonRepository;
 import java.util.Scanner;
+import java.util.Optional;
 
 public class ClientController {
     
     private final Client client;
     private final AccountService accountService;
+    private final PersonRepository personRepository;
     private final Scanner scanner = new Scanner(System.in);
     
-    public ClientController(Client client) {
+    public ClientController(Client client, PersonRepository personRepository) {
         this.client = client;
         this.accountService = new AccountService();
+        this.personRepository = personRepository;
     }
     
     public void viewAccounts() {
@@ -97,8 +101,9 @@ public class ClientController {
         System.out.println("Transaction types:");
         System.out.println("1. DEPOSIT");
         System.out.println("2. WITHDRAWAL");
-        System.out.println("3. TRANSFER");
-        System.out.print("Choose transaction type (1-3): ");
+        System.out.println("3. TRANSFER TO MY ACCOUNTS");
+        System.out.println("4. TRANSFER TO OTHER CLIENTS");
+        System.out.print("Choose transaction type (1-4): ");
         
         String choice = scanner.nextLine();
         
@@ -110,7 +115,10 @@ public class ClientController {
                 handleWithdrawal();
                 break;
             case "3":
-                handleTransfer();
+                handleInternalTransfer();
+                break;
+            case "4":
+                handleExternalTransfer();
                 break;
             default:
                 System.out.println("Invalid choice.");
@@ -169,7 +177,7 @@ public class ClientController {
         }
     }
     
-    private void handleTransfer() {
+    private void handleInternalTransfer() {
         if (client.getAccounts().size() < 2) {
             System.out.println("You need at least 2 accounts to make transfers.");
             return;
@@ -234,6 +242,84 @@ public class ClientController {
         } catch (NumberFormatException e) {
             System.out.println("Invalid account selection.");
             return null;
+        }
+    }
+    
+    private void handleExternalTransfer() {
+        if (client.getAccounts().isEmpty()) {
+            System.out.println("No accounts found. Please create an account first.");
+            return;
+        }
+        
+        System.out.println("\n=== Transfer to Other Clients ===");
+        
+        // FROM account (client's own account)
+        System.out.println("Your Accounts:");
+        DisplayUtils.displayAccountsWithIndex(client.getAccounts());
+        
+        try {
+            System.out.print("Select FROM account (1-" + client.getAccounts().size() + "): ");
+            int fromIndex = Integer.parseInt(scanner.nextLine()) - 1;
+            if (fromIndex < 0 || fromIndex >= client.getAccounts().size()) {
+                System.out.println("Invalid account selection.");
+                return;
+            }
+            
+            Account fromAccount = client.getAccounts().get(fromIndex);
+            
+            System.out.print("Enter recipient's email: ");
+            String recipientEmail = scanner.nextLine();
+            
+            //check if recipient exists
+            Optional<model.Person> recipientPerson = personRepository.findByEmail(recipientEmail);
+            if (recipientPerson.isEmpty()) {
+                System.out.println("Recipient not found with email: " + recipientEmail);
+                return;
+            }
+            
+            if (!(recipientPerson.get() instanceof Client)) {
+                System.out.println("Recipient is not a client.");
+                return;
+            }
+            
+            Client recipientClient = (Client) recipientPerson.get();
+            
+            // Check if recipient has accounts
+            if (recipientClient.getAccounts().isEmpty()) {
+                System.out.println("Recipient has no accounts.");
+                return;
+            }
+            
+            // Select TO account (recipient's account)
+            System.out.println("\nRecipient's Accounts:");
+            DisplayUtils.displayAccountsWithIndex(recipientClient.getAccounts());
+            
+            System.out.print("Select TO account (1-" + recipientClient.getAccounts().size() + "): ");
+            int toIndex = Integer.parseInt(scanner.nextLine()) - 1;
+            if (toIndex < 0 || toIndex >= recipientClient.getAccounts().size()) {
+                System.out.println("Invalid account selection.");
+                return;
+            }
+            
+            Account toAccount = recipientClient.getAccounts().get(toIndex);
+            
+            // Get transfer details
+            System.out.print("Enter amount to transfer: $");
+            double amount = Double.parseDouble(scanner.nextLine());
+            System.out.print("Enter description: ");
+            String description = scanner.nextLine();
+            
+            // Perform transfer
+            accountService.transfer(fromAccount, toAccount, amount, description);
+            System.out.println("Transfer successful!");
+            System.out.println("From account balance: $" + fromAccount.getBalance());
+            System.out.println("To account balance: $" + toAccount.getBalance());
+            System.out.println("Transferred to: " + recipientClient.getName() + " (" + recipientEmail + ")");
+            
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input format.");
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
         }
     }
 }
